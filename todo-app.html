@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<head>
+ <link rel="import" href="/elements/todo-element.html">
+     <link href="/bower_components/polymer/polymer.html" rel="import">
+     <link href="/bower_components/paper-drawer-panel/paper-drawer-panel.html" rel="import">
+     <link href="/bower_components/paper-header-panel/paper-header-panel.html" rel="import">
+     <link href="/bower_components/paper-toolbar/paper-toolbar.html" rel="import">
+     <link href="/bower_components/paper-icon-button/paper-icon-button.html" rel="import">
+     <link href="/bower_components/paper-material/paper-material.html" rel="import">
+     <link href="/bower_components/paper-menu/paper-menu.html" rel="import">
+     <link href="/bower_components/paper-item/paper-item.html" rel="import">
+     <link href="/bower_components/paper-input/paper-input.html" rel="import">
+     <link href="/bower_components/iron-icons/iron-icons.html" rel="import">
+ </head>
+ <body>
+ <dom-module id="todo-app">
+     <style> ... </style>
+     <template> </template>
+</dom-module>
+<script> ... </script>
+     <paper-menu class = "list">
+         <template is = "dom-if" if="{{!done.length}}">
+             <paper-material>
+                 <paper-item>Completed tasks will appear here!</paper-item>
+             </paper-material>
+         </template>
+         <template id="done" is="dom-repeat" items="{{done}}">
+             <paper-item>{{item.task}}<i style="margin-left: 5px;">{{item.user}}</i></paper-item>
+         </template>
+     </paper-menu>
+ <paper-drawer-panel>
+    <paper-header-panel drawer>
+        <paper-toolbar>
+            <paper-item>Side Bar Title</paper-item>
+        </paper-toolbar>
+        <!-- Side Bar Content -->
+    </paper-header-panel>
+    <paper-header-panel main>
+        <paper-toolbar>
+            <paper-item> Main Body Title </paper-item>
+        </paper-toolbar>
+        <!-- Body of Element -->
+    </paper-header-panel>
+</paper-drawer-panel>
+Polymer({
+    is: "todo-app",
+    properties: {
+        todo: {
+            type: Array,  // Default with one value
+            value: [{user:"Coder",task:"Learn Polymer",rid:0}]
+        },
+        done: {
+            type:Array,
+            value: []
+        },
+    },
+    postTask: function(e) {  // Add a new task
+        var tsk = this.$.tTask.value;
+        var usr = this.$.tUser.value;
+        if (tsk==""){
+            alert("Task is Empty!");
+            return;
+        }
+        if (usr==""){
+            usr = "Anonymous";
+        }
+        this.$.tTask.value = "";
+        //Will need to publish the task in Part 4
+    },
+    handleComplete: function(e){
+        var idx = findWithAttr(this.todo, 'rid', e.target.rid);
+        var itm = this.todo[idx];
+        itm.task = e.target.task;       //Task of the fired event
+        itm.user = this.$.tUser.value; //User who completed task
+        itm.type = "done";              //Change to completed
+        // Will Publish completed item in Part 4
+    },
+    ready: function(e){
+        this.addEventListener('complete', this.handleComplete);
+    }
+});
+function randID(){  // RandID is just a large number, could be better.
+    return Math.floor(Math.random()*10000);
+}
+function findWithAttr(array, attr, value) { //Finds object index in array by its random ID
+    for(var i = 0; i < array.length; i += 1) {
+        if(array[i][attr] === value) {
+            return i;
+        }
+    }
+}
+
+</body>
+</html>
